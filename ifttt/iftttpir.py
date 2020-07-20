@@ -46,7 +46,7 @@ try:
 		# Read PIR state
 		currentstate = GPIO.input(pinpir)
 		
-		if currentstate = 1:
+		if currentstate == 1:
 			time_trigger = time.time()
 			
 		time_elapsed = time.time() - time_trigger
@@ -74,10 +74,10 @@ try:
 			# Record new previous state
 			previousstate = 0
 			
-		elif currentstate = 1:
+		elif currentstate == 1:
 			logging.debug('More motion detected. Timer is set to ' + str(timer) + ' and there are ' + str(time_trigger - time_elapsed) + ' seconds left.')
 			
-		elif currentstate = 0:
+		elif currentstate == 0:
 			logging.debug('No motion detected.')
 			
 
