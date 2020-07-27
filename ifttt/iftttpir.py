@@ -25,6 +25,12 @@ GPIO.setup(pinpir, GPIO.IN)
 currentstate = 0
 previousstate = 0
 
+# set timer for 5 minutes (300 seconds) until shutoff event fires
+timer = 300
+	
+# set the last time motion was detected to epoch
+time_trigger = 0
+
 try:
 	print('Waiting for PIR to settle ...')
 	
@@ -34,11 +40,6 @@ try:
 		currentstate = 0
 
 	print('    Ready!')
-	# set timer for 5 minutes (300 seconds) until shutoff event fires
-	timer = 300
-	
-	# set the last time motion was detected to epoch
-	time_trigger = 0
 	
 	# Loop until users quits with CTRL-C
 	while True:
@@ -78,7 +79,7 @@ try:
 			logging.debug('More motion detected. Timer is set to ' + str(timer) + ' and there are ' + str(time_trigger - time_elapsed) + ' seconds left.')
 			
 		elif currentstate == 0:
-			logging.debug('No motion detected.')
+			logging.debug('No motion detected. Timer is set to ' + str(timer) + ' and there are ' + str(time_trigger - time_elapsed) + ' seconds left.')
 			
 
 		# Wait for 100 milliseconds
