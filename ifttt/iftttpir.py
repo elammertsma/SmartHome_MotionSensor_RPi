@@ -76,10 +76,10 @@ try:
 			previousstate = 0
 			
 		elif currentstate == 1:
-			logging.debug('More motion detected. Timer is set to ' + str(timer) + ' and there are ' + str(time_trigger - time_elapsed) + ' seconds left.')
+			print(f'More motion detected. timer={str(timer)}, trigger={str(time_trigger)}, elapsed={str(time_elapsed)}, remaining={str(timer - time_elapsed)}')
 			
 		elif currentstate == 0:
-			logging.debug('No motion detected. Timer is set to ' + str(timer) + ' and there are ' + str(time_trigger - time_elapsed) + ' seconds left.')
+			print(f'No motion detected. timer={str(timer)}, trigger={str(time_trigger)}, elapsed={str(time_elapsed)}, remaining={str(timer - time_elapsed)}')
 			
 
 		# Wait for 100 milliseconds
