@@ -6,7 +6,7 @@ Materials:
   - or Raspberry Pi 3B, 3B+ (3A, or 4) - https://amzn.to/2O9SxiO
 - MicroSD card - https://amzn.to/2Nq5AN9
 - Motion Sensor - https://www.adafruit.com/product/189
-- A smart device like a TP-Link Smart Plug (https://amzn.to/30dpAty) or I used a Philips Wiz Light 
+- A smart device like a TP-Link Smart Plug (https://amzn.to/30dpAty). I used Philips WiZ Lights from Home Depot because I love the built-in automatic circadian rhythem and brightness for my bathroom. This made a perfect use-case for motion sensing since those lights only need to be on if someone enters the bathroom.
 - Peripherals: Mouse, Keyboard, & Monitor
 
 Assumptions:
