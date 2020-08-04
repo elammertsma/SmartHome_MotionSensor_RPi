@@ -4,6 +4,8 @@
 import RPi.GPIO as GPIO
 import time
 import requests
+from requests.exceptions import HTTPError
+from requests.exceptions import Timeout
 import logging
 
 # ADD YOUR IFTTT WEBHOOK KEY HERE
