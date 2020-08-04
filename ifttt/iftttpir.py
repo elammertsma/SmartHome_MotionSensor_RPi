@@ -9,7 +9,7 @@ from requests.exceptions import Timeout
 import logging
 
 # ADD YOUR IFTTT WEBHOOK KEY HERE
-ifttt_key='***REMOVED***'
+ifttt_key='YOUR_KEY_HERE'
 
 # Set the log level
 logging.basicConfig(level=logging.DEBUG)
