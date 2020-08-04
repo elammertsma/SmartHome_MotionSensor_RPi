@@ -6,11 +6,11 @@ Materials:
   - or Raspberry Pi 3B, 3B+ (3A, or 4) - https://amzn.to/2O9SxiO
 - MicroSD card - https://amzn.to/2Nq5AN9
 - Motion Sensor - https://www.adafruit.com/product/189
-- A smart device like a TP-Link Smart Plug (https://amzn.to/30dpAty). I used Philips WiZ Lights from Home Depot because I love the built-in automatic circadian rhythem and brightness for my bathroom. This made a perfect use-case for motion sensing since those lights only need to be on if someone enters the bathroom.
-- Peripherals: Mouse, Keyboard, & Monitor
+- A smart device like a TP-Link Smart Plug (https://amzn.to/30dpAty). I used Philips WiZ Lights from Home Depot because I love the built-in automatic circadian rhythm and brightness for my bathroom. This made a perfect use-case for motion sensing since those lights only need to be on if someone enters the bathroom.
+- Optional peripherals: Mouse, Keyboard, & Monitor
 
 Assumptions:
-- Working knowledge of how to setup a fresh Raspberry Pi with Raspberry Pi OS (or optionally the Lite version on a Pi Zero W).
+- Working knowledge of how to setup a fresh Raspberry Pi with Raspberry Pi OS (or preferably the Lite version on a Pi Zero W).
 - A rough understanding of how the Raspberry Pi GPIO works
 - How to boot up a Raspberry Pi.
 - A grasp of some basic Linux commands
@@ -21,7 +21,7 @@ I assume this isn't your first experience with a Raspberry Pi, so won't go into 
 - Download and flash Raspberry Pi OS on a micro SD card
 - Enable SSH and add your WiFi by adding files to the SD card, as described at https://learn.adafruit.com/raspberry-pi-zero-creation/install-os-on-to-sd-card
 - Place the SD card in the Raspberry Pi
-- Either attach a mouse, keyboard, and monitor to your Raspberry Pi, or use another computer to log in to it through SSH with nothing attached
+- Use another computer to log in to it through SSH or, optionally, attach a mouse, keyboard, and monitor to your Raspberry Pi
 - Boot up your Raspberry Pi
 
 To let Python interact with the GPIO pins, we need to install a library:
@@ -87,22 +87,21 @@ sudo apt-get upgrade
 mkdir ifttt
 cd ifttt
 wget https://raw.githubusercontent.com/elammertsma/SmartHome_MotionSensor_RPi/master/ifttt/iftttpir.py
-sudo nano iftttpir.py
+nano iftttpir.py
 ```
 - Go back to your IFTTT webpage and copy the key
-- Paste IFTTT key into lines 62 and 71. For example:
+- Paste IFTTT key into line 12. For example:
 ```
-r = requests.post('https://maker.ifttt.com/trigger/motion_detected/with/key/KXXXXXXXXXXXXXXA6pE', params={"value1":"none","value2":"none","value3":"none"})
-r = requests.post('https://maker.ifttt.com/trigger/motion_stopped/with/key/KXXXXXXXXXXXXXXA6pE', params={'value1':'none','value2':'none','value3':'none'})
+ifttt_key='nTxxxxxxxxxxxxxxJSA'
 ```
-- While you're in the file, note the timer variable on line 29. It is set in seconds (for example 300 seconds for five minutes), meaning that the motion_stopped IFTTT funtion will run if no motion is detected for that many seconds after the last motion was detected. Feel free to make this shorter or longer.
+- While you're in the file, note the timer variable on line 33. It is set in seconds (for example 300 seconds for five minutes), meaning that the motion_stopped IFTTT funtion will run if no motion is detected for that many seconds after the last motion was detected. Feel free to make this shorter or longer.
 ```timer = 300```
 - Ctrl-X
 - Y to save
 - press Enter to confirm keeping the filename unchanged
 
 Now let's try running the code!
-```sudo python3 iftttpir.py```
+```python3 iftttpir.py```
 
 Now move your hand in front of your motion sensor and see if it works. If it doesn't work, retrace your steps.
 
