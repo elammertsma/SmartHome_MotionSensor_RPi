@@ -20,7 +20,7 @@ import logging
 # Load the IFTTT webhook key from our keys.txt file
 with open('keys.txt', mode='r') as keys:
     keys_list = keys.readlines()
-	keys_dict = {key.split('=')[0].strip():key.split('=')[1].strip() for key in keys_list}
+    keys_dict = {key.split('=')[0].strip():key.split('=')[1].strip() for key in keys_list}
 ifttt_key = keys_dict['ifttt_key']
 
 # Set the log level
