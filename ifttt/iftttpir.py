@@ -24,20 +24,17 @@ os.umask(0)
 path_to_script = os.path.dirname(os.path.abspath(__file__))
 log_file = os.path.join(path_to_script, 'iftttpir.log')
 # Create log file with write permissions for all users
-with open(os.open(log_file, os.O_CREAT | os.O_WRONLY, 0o777), 'w') as lf:
+with open(os.open(log_file, os.O_CREAT | os.O_WRONLY, 0o777), mode='w') as lf:
   lf.write('Log file created')
 
 # Load the IFTTT webhook key from our keys.txt file
 keys_file = os.path.join(path_to_script, 'keys.txt')
-with open(keys_file, mode='r') as keys:
-    keys_list = keys.readlines()
-    keys_dict = {key.split('=')[0].strip():key.split('=')[1].strip() for key in keys_list}
+with open(keys_file, mode='r') as kf:
+    keys_list = kf.readlines()
+    keys_dict = {key.split('=')[0].strip() : key.split('=')[1].strip() for key in keys_list}
 ifttt_key = keys_dict['ifttt_key']
 
 # Set the log level and start logging so we can see what's happening
-# 
-# Filemode "w" (write) overwrites the log file every time the script runs.
-# Change the mode to "a" (append) if you want to keep one long log file for all runs.
 logging.basicConfig(filename=log_file, filemode='w', format='%(asctime)s: %(levelname)s: %(message)s', level=logging.INFO)
 # Comment the above line and uncomment the below line if you want to see live logs while
 # trying to solve a problem with your code.
@@ -67,17 +64,17 @@ def reqaction(action, rep):
             r = requests.post(f'https://maker.ifttt.com/trigger/{action}/with/key/{ifttt_key}', params = {'value1' : 'none', 'value2' : 'none', 'value3' : 'none'}, timeout = ifttt_timeout)
             r.raise_for_status()
         except HTTPError as http_err:
-            logging.error(f'Request {action} failed on try {i+1}')
-            logging.error(f'HTTP error occurred: {http_err}')
+            logging.error(f'!---Request {action} failed on try {i+1}')
+            logging.error(f'!---HTTP error occurred: {http_err}')
         except Timeout as time_err:
-            logging.error(f'Request {action} timed out on try {i+1}')
-            logging.error(f'Time out occurred: {time_err}')
+            logging.error(f'!---Request {action} timed out on try {i+1}')
+            logging.error(f'!---Time out occurred: {time_err}')
         except Exception as err:
-            logging.error(f'Request {action} failed on try {i+1}')
-            logging.error(f'Other error occurred: {err}')
+            logging.error(f'!---Request {action} failed on try {i+1}')
+            logging.error(f'!---Other error occurred: {err}')
         else:
-            logging.info(f'Request {action} success on try {i+1}!')
-            logging.debug(f'Response: {r.text}')
+            logging.info(f'    Request {action} success on try {i+1}!')
+            logging.debug(f'    Response: {r.text}')
             break
         pass
 
@@ -89,7 +86,7 @@ def main():
 
         current_state = 0
 
-    logging.info('    Ready!')
+    logging.info('    Ready!\n')
 
     # Variables to hold the current and last states
     current_state = 0
@@ -97,6 +94,7 @@ def main():
 
     # set the last time motion was detected to epoch
     time_trigger = 0
+    activated_time = 0
 
     global timer
 
@@ -114,7 +112,8 @@ def main():
         # If the PIR is triggered
         if current_state == 1 and previous_state == 0:
 
-            logging.info(f'New motion detected')
+            logging.info(f'Motion detected!')
+            activated_time = time.time()
 
             # Fire the motion event when the motion started (e.g. turn on the lights)
             # Your IFTTT URL with event name, key and json parameters (values)
@@ -126,22 +125,31 @@ def main():
         # If the PIR has returned to ready state and the timer ran out
         elif current_state == 0 and previous_state == 1 and time_elapsed > timer:
 
+            # Log a neatly formatted duration that the light was on.
+            total_time_delta = time.time() - activated_time
+            total_time_minutes = round(total_time_delta // 60)
+            total_time_seconds = round(total_time_delta % 60)
+            total_time = f'{total_time_minutes:02}:{total_time_seconds:02}'
+
+            logging.info(f'Motion stopped!')
+
             # Fire an event when the motion stopped and the timer ran out (e.g. turn off the lights)
             reqaction('motion_stopped', 3)
 
-            logging.info(f'Timer of {timer} seconds expired with no motion detected.\n    Ready!')
+            logging.info(f'    Light was on for {total_time} with a timer of {timer} seconds.')
+            logging.info('    Ready!\n')
 
             # Record new previous state
             previous_state = 0
 
         elif current_state == 1:
-            logging.debug(f'More motion detected. timer={str(timer)}, trigger={time.ctime(time_trigger)[-13:-5]}, elapsed={str(int(time_elapsed))}, remaining={str(int(timer - time_elapsed))}')
+            logging.debug(f'    More motion detected. timer={str(timer)}, trigger={time.ctime(time_trigger)[-13:-5]}, elapsed={str(int(time_elapsed))}, remaining={str(int(timer - time_elapsed))}')
 
         elif current_state == 0:
-            logging.debug(f'No motion detected.   timer={str(timer)}, trigger={time.ctime(time_trigger)[-13:-5]}, elapsed={str(int(time_elapsed))}, remaining={str(int(timer - time_elapsed))}')
+            logging.debug(f'    No motion detected.   timer={str(timer)}, trigger={time.ctime(time_trigger)[-13:-5]}, elapsed={str(int(time_elapsed))}, remaining={str(int(timer - time_elapsed))}')
 
         # Wait for 100 milliseconds
-        time.sleep(0.5)
+        time.sleep(0.1)
 
 try:
     main()
