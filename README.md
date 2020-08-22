@@ -1,5 +1,6 @@
 # SmartHome_MotionSensor_RPi
 This project combines a Raspberry Pi with a motion sensor to control a smart home device with IFTTT.
+
 Many thanks to Caroline Dunn for starting this project! Her original tutorial can be found in the contributions at the top of this Github page. I've made many modifications to the code and tutorial to make this run more reliably and so that you can update your motion sensor with future versions of my code without any issues.
 
 Materials:
