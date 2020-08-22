@@ -16,17 +16,31 @@ import requests
 from requests.exceptions import HTTPError
 from requests.exceptions import Timeout
 import logging
+import os
+
+# Create a log file that has write access from all users.
+# The default umask is 0o22 which turns off write permission of group and others
+os.umask(0)
+path_to_script = os.path.dirname(os.path.abspath(__file__))
+log_file = os.path.join(path_to_script, 'iftttpir.log')
+# Create log file with write permissions for all users
+with open(os.open(log_file, os.O_CREAT | os.O_WRONLY, 0o777), 'w') as lf:
+  lf.write('Log file created')
 
 # Load the IFTTT webhook key from our keys.txt file
-with open('keys.txt', mode='r') as keys:
+keys_file = os.path.join(path_to_script, 'keys.txt')
+with open(keys_file, mode='r') as keys:
     keys_list = keys.readlines()
     keys_dict = {key.split('=')[0].strip():key.split('=')[1].strip() for key in keys_list}
 ifttt_key = keys_dict['ifttt_key']
 
-# Set the log level
+# Set the log level and start logging so we can see what's happening
+# 
 # Filemode "w" (write) overwrites the log file every time the script runs.
-# Change the mode to "a" (append) if you want to keep one long log file for every run.
-logging.basicConfig(filename='/home/pi/logging/iftttpir.log', filemode='w', format='%(asctime)s: %(levelname)s: %(message)s', level=logging.INFO)
+# Change the mode to "a" (append) if you want to keep one long log file for all runs.
+logging.basicConfig(filename=log_file, filemode='w', format='%(asctime)s: %(levelname)s: %(message)s', level=logging.INFO)
+# Comment the above line and uncomment the below line if you want to see live logs while
+# trying to solve a problem with your code.
 #logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s', level=logging.DEBUG)
 
 # Set the GPIO naming convention
