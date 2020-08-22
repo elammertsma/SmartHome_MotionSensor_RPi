@@ -83,13 +83,22 @@ Now go back a to the beginning of the IFTTT home page and create another action 
 
 Open a Terminal and run the following commands
 
+- First, we'll make sure our Pi is up to date:
 ```
 sudo apt-get update
 sudo apt-get upgrade
-mkdir ifttt
-cd ifttt
-wget https://raw.githubusercontent.com/elammertsma/SmartHome_MotionSensor_RPi/master/ifttt/iftttpir.py
+```
+- Next we'll download this motion detector project from Github:
+```
+git clone https://github.com/elammertsma/SmartHome_MotionSensor_RPi.git
+```
+- Then we need to add the IFTTT key we recieved above to a new file we'll create, called keys.txt. We need to create this in the folder where the script is:
+```
+cd SmartHome_MotionSensor_RPi/ifttt/
 touch keys.txt
+```
+- Then we open the keys.txt file to add our key:
+```
 nano keys.txt
 ```
 - Now add the following text to the file:
@@ -97,13 +106,13 @@ nano keys.txt
 ifttt_key=
 ```
 - Go back to your IFTTT webpage and copy the key
-- Paste the IFTTT webhook key at the end of the line, so it reads:
+- Paste the IFTTT webhook key at the end of the line. Note that in Nano, you need to press Ctrl+U to paste! When you're done it should look like this:
 ```
 ifttt_key=nTxxxxxxxxxxxxxxJSA
 ```
-- Ctrl-X
-- Y to save
-- press Enter to confirm keeping the filename unchanged
+- Press Ctrl-X
+- Press Y to save
+- Press Enter to confirm keeping the filename unchanged
 - Optionally, you can change some settings in the code in iftttpir.py:
 ```
 nano iftttpir.py
@@ -113,6 +122,8 @@ nano iftttpir.py
 
 Now let's try running the code!
 ```python3 iftttpir.py```
+Or, if you navigated to a different folder:
+```python3 ~/SmartHome_MotionSensor_RPi/ifttt/iftttpir.py```
 
 Now move your hand in front of your motion sensor and see if it works. If it doesn't work, retrace your steps.
 
@@ -127,20 +138,44 @@ If you're going to use this as a motion sensor (semi-)permenantly, this is neces
 ```sudo nano /etc/rc.local```
 - Arrow down to the bottom of the file.
 - On a new line before 'Exit 0' add following in rc.local
-```sudo python3 /home/pi/ifttt/iftttpir.py &```
+```sudo python3 /home/pi/SmartHome_MotionSensor_RPi/ifttt/iftttpir.py &```
 - The end of the file should now look like this:
 ```
-sudo python3 /home/pi/iftttpir.py &
+sudo python3 /home/pi/SmartHome_MotionSensor_RPi/ifttt/iftttpir.py &
 exit 0
 ```
 - Don't forget the "&" at the end of the line! This lets the script complete without waiting for the Python script to complete. If you left it out, rc.local would never complete and the boot sequence would never finish because our Python script runs forever!
-- Ctrl-X to exit
-- 'y' to Save
-- Press enter to confirm.
-- Reboot your Raspberry Pi.
+- Press Ctrl-X to exit
+- Press Y to Save
+- Press Enter to confirm
+- Reboot your Raspberry Pi
+```
+sudo reboot
+```
 
 Voila! You now have a motion sensor that automatically turns on your lights and turns them off again when no one is around!
 
 
+# Step 6: Occassionally get the latest updates
 
-  
+Sometimes, I update this project so it runs even better. I use this project in my own home, so whenever I encounter a problem I fix it and make sure to update the code. If you ever run into an issue, it's always a good idea to see if the code has been updated.
+
+To update your code:
+- Log in to your Pi
+- Always make sure your Pi is up to date:
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+- Navigate to the project folder:
+```
+cd ~/SmartHome_MotionSensor_RPi/ifttt/
+```
+- Tell git to retrieve the latest updates and reboot:
+```
+git pull
+sudo reboot
+```
+
+If you still have issues, just open an issue in this project or send me a message and I'll take a look!
+
