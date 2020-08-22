@@ -1,5 +1,6 @@
 # SmartHome_MotionSensor_RPi
-This project combines a Raspberry Pi with a motion sensor to control a smart home device with IFTTT
+This project combines a Raspberry Pi with a motion sensor to control a smart home device with IFTTT.
+Many thanks to Caroline Dunn for starting this project! Her original tutorial can be found in the contributions at the top of this Github page. I've made many modifications to the code and tutorial to make this run more reliably and so that you can update your motion sensor with future versions of my code without any issues.
 
 Materials:
 - Raspberry Pi Zero W with headers (or without headers by soldering) - https://amzn.to/2NncxP4
@@ -21,13 +22,13 @@ I assume this isn't your first experience with a Raspberry Pi, so won't go into 
 - Download and flash Raspberry Pi OS on a micro SD card
 - Enable SSH and add your WiFi by adding files to the SD card, as described at https://learn.adafruit.com/raspberry-pi-zero-creation/install-os-on-to-sd-card
 - Place the SD card in the Raspberry Pi
-- Use another computer to log in to it through SSH or, optionally, attach a mouse, keyboard, and monitor to your Raspberry Pi
+- Use another computer to log in to it through SSH (preferred method) or, optionally, attach a mouse, keyboard, and monitor to your Raspberry Pi
 - Boot up your Raspberry Pi
 
 To let Python interact with the GPIO pins, we need to install a library:
 - Open a terminal on the Pi (either directly or through SSH) and enter:
 ```pip3 --version```
-- If it shows you a version number, great! You can skip the next step - but it probably won't since Raspberry Pi OS doesn't usually include it.
+- If it shows you a version number, great! You can skip the next step - but it probably won't since Raspberry Pi OS doesn't usually include it for Python 3.
 - Otherwise, enter:
 ```
 sudo apt-get install python3-pip
@@ -45,7 +46,7 @@ pip3 --version
   - Connect the VCC pin of your motion sensor to GPIO pin 2 of your Raspberry Pi
 - Power on your Pi.
 
-![WiringDiagram](https://github.com/carolinedunn/SmartHome_MotionSensor_RPi/blob/master/Wiring%20Diagram-MotionSensor%20to%20RPi.jpg)
+![WiringDiagram](https://github.com/elammertsma/SmartHome_MotionSensor_RPi/blob/master/Wiring%20Diagram-MotionSensor%20to%20RPi.jpg)
 
 # Step 3: Setup IFTTT
 
@@ -87,18 +88,27 @@ sudo apt-get upgrade
 mkdir ifttt
 cd ifttt
 wget https://raw.githubusercontent.com/elammertsma/SmartHome_MotionSensor_RPi/master/ifttt/iftttpir.py
-nano iftttpir.py
+touch keys.txt
+nano keys.txt
+```
+- Now add the following text to the file:
+```
+ifttt_key=
 ```
 - Go back to your IFTTT webpage and copy the key
-- Paste IFTTT key into line 12. For example:
+- Paste the IFTTT webhook key at the end of the line, so it reads:
 ```
-ifttt_key='nTxxxxxxxxxxxxxxJSA'
+ifttt_key=nTxxxxxxxxxxxxxxJSA
 ```
-- While you're in the file, note the timer variable on line 33. It is set in seconds (for example 300 seconds for five minutes), meaning that the motion_stopped IFTTT funtion will run if no motion is detected for that many seconds after the last motion was detected. Feel free to make this shorter or longer.
-```timer = 300```
 - Ctrl-X
 - Y to save
 - press Enter to confirm keeping the filename unchanged
+- Optionally, you can change some settings in the code in iftttpir.py:
+```
+nano iftttpir.py
+```
+- Take a look around and see what you can understand. While you're in the file, note the timer variable on line 48. It is set in seconds (for example 240 seconds for five minutes), meaning that the motion_stopped IFTTT funtion will run if no motion is detected 5 minutes after the last motion was detected. Feel free to make this shorter or longer.
+```timer = 240```
 
 Now let's try running the code!
 ```python3 iftttpir.py```
@@ -108,10 +118,10 @@ Now move your hand in front of your motion sensor and see if it works. If it doe
 
 # Step 5: Run on Boot
 
-This step is optional if you'd like for this python script to run at boot. If you're going to use this as a motion sensor (semi-)permenantly, you should definitely do this!
+If you're going to use this as a motion sensor (semi-)permenantly, this is necessary! In that case, we want our script to run anytime the Pi reboots (for example if it gets unplugged or the power goes out).
 
 - Open a Terminal
-- We're going to set the boot script to include our python script. We do this in /etc/rc.local, which runs at every boot. If we did this in /home/pi/.bashrc, it would run every time you log in to a terminal as 'pi' instead, which isn't what we want. Since we want this script to run unattended as a motion sensor, we want it to run every time the pi boots up, even if no one logs in.
+- We're going to set the boot script to include our python script. We do this in /etc/rc.local, which runs at every boot. Another option is to do this in /home/pi/.bashrc, but then it would only run when you log in to a terminal as 'pi' instead, which isn't what we want. Since we want this script to run unattended as a motion sensor, we want it to run in the background every time the pi boots up, even if no one logs in.
 - Enter:
 ```sudo nano /etc/rc.local```
 - Arrow down to the bottom of the file.
@@ -122,13 +132,13 @@ This step is optional if you'd like for this python script to run at boot. If yo
 sudo python3 /home/pi/iftttpir.py &
 exit 0
 ```
-- Don't forget the & at the end of the line! This lets the script complete without waiting for the Python script to complete. If you left it out, rc.local would never complete because our Python script runs forever!
+- Don't forget the "&" at the end of the line! This lets the script complete without waiting for the Python script to complete. If you left it out, rc.local would never complete and the boot sequence would never finish because our Python script runs forever!
 - Ctrl-X to exit
 - 'y' to Save
 - Press enter to confirm.
 - Reboot your Raspberry Pi.
 
-Voila! You now have a motion sensor that turns on your lights and turns them off again when no one is around (unless they stand very still).
+Voila! You now have a motion sensor that automatically turns on your lights and turns them off again when no one is around!
 
 
 
